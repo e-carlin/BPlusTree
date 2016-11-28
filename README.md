@@ -1,6 +1,6 @@
-A B Plus tree with insert and search methods.
+Class project for Database Management Systems (CS455)
 
-TESTING 123
+This is a simple implementation of a B+Tree.
 
-eclipse test
+The tree supports insert and serach functionality.
 
