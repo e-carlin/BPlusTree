@@ -10,5 +10,8 @@ public class InternalNode<E extends Comparable<E>> extends Node<E>{
 		children = new ArrayList<Node<E>>();
 	}
 
+	public ArrayList<Node<E>> getChildren(){
+		return children;
+	}
 	
 }

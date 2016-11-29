@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 
 /**
  * A leaf node
@@ -17,7 +18,7 @@ public class LeafNode<E extends Comparable<E>> extends Node<E> {
 	 * Gets the next leaf node
 	 * @return the next leaf node
 	 */
-	public LeafNode<E> getNextLeaf(){
+	public LeafNode getNext(){
 		return nextLeaf;
 	}
 	
@@ -28,4 +29,11 @@ public class LeafNode<E extends Comparable<E>> extends Node<E> {
 	public void setNextLeaf(LeafNode<E> leaf){
 		nextLeaf = leaf;
 	}
+
+	//TODO: Think about this more is this really desired behavior??
+	@Override
+	public ArrayList<Node<E>> getChildren(){
+		return null;
+	}
+
 }
