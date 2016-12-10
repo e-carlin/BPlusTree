@@ -20,13 +20,14 @@ public class BPlusTree<E extends Comparable <E>>{
 		
 	}
 	
-	//TODO: complete
+	//TODO: complete and TEST
 	private Node<E> findLeafFor(E value, Node<E> localRoot){
-		//Either root is a leaf or we have reached a leaf so this node is where value should be placed
+		//We have reached a leaf so this node is where value should be placed
 		if(localRoot instanceof LeafNode){
 			return localRoot;
 		}
 		else{
+			//Look through this nodes values to find which pointer we should follow
 			for(int i=0; i<localRoot.sizeOfValues(); i++){
 				//Value should should go in leftmost subtree
 				if(i==0 && value.compareTo(localRoot.getValue(i)) < 0){
@@ -34,7 +35,12 @@ public class BPlusTree<E extends Comparable <E>>{
 				}
 				//Value should go in one of internal pointers
 				else if(i>0 && i<localRoot.sizeOfValues()-1){ //TODO: Test if it should really be -1
-					
+					if
+				}
+				
+				//Value should go in rightmost pointers subtree
+				else if(i==localRoot.sizeOfValues()-1){
+					return findLeafFor(value, localRoot.getChildren().get(localRoot.sizeOfValues()-1));
 				}
 			}
 		}
