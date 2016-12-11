@@ -1,28 +1,31 @@
-
 public class BPlusTree<E extends Comparable <E>>{
 	
 	public Node<E> root;
 	public int degree;
 	
-	public BPlusTree(int degree){
-		degree = degree;
+	public BPlusTree(int d){
+		degree = d;
 		root = null;
 	}
 	
 	public void insert(E value){
-		//Tree is empty so we can just create a leaf node and insert the value
+		//Tree is empty so we can just create a leaf node and put the value
 		if(this.isEmpty()){
-			LeafNode<E> node = new LeafNode<E>(degree);
-			root = node;
-			root.insert(value);
+			root = new LeafNode<>(degree);
+			root.put(value);
 			return;
 		}
 
 		//Tree is not empty so we must find the leaf where value should go
 		LeafNode<E> insertIntoNode = findLeafFor(value, root);
-		//The leaf node isn't full so we can just insert into it
+		//The leaf node isn't full so we can just put into it!
 		if(!insertIntoNode.isFull()){
-			insertIntoNode.insert(value);
+			insertIntoNode.put(value);
+		}
+
+		//The node is full so we must split
+		else{
+
 		}
 		
 	}
@@ -34,7 +37,7 @@ public class BPlusTree<E extends Comparable <E>>{
 	//TODO: complete and TEST
 	/**
 	 * Find the lead where value should be inserted
-	 * @param value the value we wish to insert
+	 * @param value the value we wish to put
 	 * @param localRoot the local node we wish to examine
 	 * @return the leaf node where value should be inserted
 	 */

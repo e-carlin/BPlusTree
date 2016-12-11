@@ -14,13 +14,13 @@ public abstract class Node<E extends Comparable<E>>{
 	
 	public abstract ArrayList<Node<E>> getChildren();
 	
-	public void insert(E elemToInsert){
+	public void put(E elemToInsert){
 		for(int i=0; i<values.size(); i++){
 			//elemToInsert is bigger than this element so keep going
 			if(elemToInsert.compareTo(values.get(i)) > 0){
 				continue;
 			}
-			//elemToInsert is <= this element so insert it here
+			//elemToInsert is <= this element so put it here
 			values.add(i, elemToInsert);
 			return;
 		}
@@ -46,8 +46,7 @@ public abstract class Node<E extends Comparable<E>>{
 	}
 
 	public boolean isFull(){
-		System.out.println("In is full size is "+values.size() + "   degree is "+degree);
-		return values.size() >= degree-1 ? true : false;
+		return values.size() >= degree-1;
 	}
 }
 
