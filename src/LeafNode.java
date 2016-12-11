@@ -18,7 +18,7 @@ public class LeafNode<E extends Comparable<E>> extends Node<E> {
 	 * Gets the next leaf node
 	 * @return the next leaf node
 	 */
-	public LeafNode getNext(){
+	public LeafNode getNextLeaf(){
 		return nextLeaf;
 	}
 	
