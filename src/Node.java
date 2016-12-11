@@ -7,8 +7,8 @@ public abstract class Node<E extends Comparable<E>>{
 	public int degree;
 	public ArrayList<E> values;
 	
-	public Node(int degree){
-		degree = degree;
+	public Node(int d){
+		degree = d;
 		values = new ArrayList<E>();
 	}
 	
@@ -17,10 +17,12 @@ public abstract class Node<E extends Comparable<E>>{
 	public void insert(E elemToInsert){
 		for(int i=0; i<values.size(); i++){
 			//elemToInsert is bigger than this element so keep going
-			if(values.get(i).compareTo(elemToInsert) <0){continue;}
-	
+			if(elemToInsert.compareTo(values.get(i)) > 0){
+				continue;
+			}
 			//elemToInsert is <= this element so insert it here
 			values.add(i, elemToInsert);
+			return;
 		}
 		//All elements where < elemToInsert so append to end of list
 		values.add(elemToInsert);
@@ -41,6 +43,11 @@ public abstract class Node<E extends Comparable<E>>{
 		}
 		
 		return toReturn;
+	}
+
+	public boolean isFull(){
+		System.out.println("In is full size is "+values.size() + "   degree is "+degree);
+		return values.size() >= degree-1 ? true : false;
 	}
 }
 

@@ -31,9 +31,14 @@ public class LeafNode<E extends Comparable<E>> extends Node<E> {
 	}
 
 	//TODO: Think about this more is this really desired behavior??
+	/**
+	 * A leaf node has no children so return null
+	 * @return
+	 */
 	@Override
 	public ArrayList<Node<E>> getChildren(){
 		return null;
 	}
+
 
 }
