@@ -32,6 +32,7 @@ public class InternalNode<E extends Comparable<E>> extends Node<E>{
 		children.add(index, childNode);
 	}
 
+	//TODO: Fix this, the node should be added where it belongs not just to the end of the list
 	/**
 	 * Appends the node to the end of the children list
 	 * @param childNode the node we want to add

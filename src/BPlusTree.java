@@ -147,12 +147,13 @@ public class BPlusTree<E extends Comparable <E>>{
 
 
 			//*** Order is important here **** MUST set left then right because left contains smaller values the righ
-			root.addChild(overFlownLeaf);
-			root.addChild(rightLeaf);
+			((InternalNode<E>)root).addChild(overFlownLeaf);
+			((InternalNode<E>)root).addChild(rightLeaf);
 
 			if (DEBUG) {
+				//TODO: This wasn't here before refactoring no instance of check and no cast
 			    if(root instanceof InternalNode) {
-				    System.out.println("The roots children are " + Arrays.toString((InternalNode)root.getChildren().toArray()));
+				    System.out.println("The roots children are " + Arrays.toString(((InternalNode)root).getChildren().toArray()));
                 }
 			}
 		}
@@ -194,7 +195,6 @@ public class BPlusTree<E extends Comparable <E>>{
 				}
 
 				else{
-                    //TODO: Parent is full so we must propagate a parent split
 				    if(DEBUG){
                         System.out.println("Parent is full so we must do some internal node splitting work!");
                         System.out.println("Naively add to the parent and then pass off to the internal node split and propagate method");
@@ -203,6 +203,7 @@ public class BPlusTree<E extends Comparable <E>>{
 
                     //Naively add the value to the internal node
                     parent.putValue(rightLeaf.getValue(0));
+				    //TODO: The add child logic isn't right. If the split node was not on the end then the pointer shouldn't be added to the end of the parent's children
                     //Naively add a pointer to the split node
                     parent.addChild(rightLeaf);
                     //Handle the now overflown node
@@ -289,19 +290,19 @@ public class BPlusTree<E extends Comparable <E>>{
 			for(int i=0; i<localRoot.sizeOfValues(); i++){
 				//Value should should go in leftmost subtree
 				if(i ==0 && value.compareTo(localRoot.getValue(i)) < 0){
-					return findLeafFor(value, localRoot.getChildren().get(0));
+					return findLeafFor(value, ((InternalNode<E>)localRoot).getChildren().get(0));
 				}
 
 				//Value should go in rightmost pointers subtree
 				//TODO: The check after the && is extraneous we will only ever get to here in the loop if it true
 				else if(i==localRoot.sizeOfValues()-1 && value.compareTo(localRoot.getValue(i)) >= 0){
-					return findLeafFor(value, localRoot.getChildren().get(i+1));
+					return findLeafFor(value, ((InternalNode<E>)localRoot).getChildren().get(i+1));
 				}
 
 				//Value should go in one of the internal pointers subtree
 				else if(value.compareTo(localRoot.getValue(i)) >= 0 && value.compareTo(localRoot.getValue(i+1)) < 0) {
 					// i <= value < i+1; so it value goes in the i+1 childs subtree
-					return findLeafFor(value, localRoot.getChildren().get(i + 1));
+					return findLeafFor(value, ((InternalNode<E>)localRoot).getChildren().get(i + 1));
 				}
 			}
 		}

@@ -3,7 +3,7 @@ import java.util.Arrays;
 import java.util.List;
 
 
-public abstract class Node<E extends Comparable<E>>{
+public class Node<E extends Comparable<E>>{
 
 	//TODO: make private
 	private int degree;
@@ -13,16 +13,8 @@ public abstract class Node<E extends Comparable<E>>{
 	public Node(int d){
 		parent = null;
 		degree = d;
-		values = new ArrayList<E>();
+		values = new ArrayList<>();
 	}
-
-//	public abstract ArrayList<Node<E>> getChildren();
-
-	public abstract Node<E> getChild(int index);
-
-	public abstract void addChild(int index, Node<E> childNode);
-
-	public abstract void addChild(Node<E> childnode);
 
 	/**
 	 * Inserts a value in sorted (ascending order)

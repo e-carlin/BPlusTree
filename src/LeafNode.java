@@ -33,26 +33,4 @@ public class LeafNode<E extends Comparable<E>> extends Node<E> {
 		nextLeaf = leaf;
 	}
 
-	//TODO: Think about this more is this really desired behavior??
-	/**
-	 * A leaf node has no children so return null
-	 * TODO: see if this can be changed to null
-	 * @return
-	 */
-	@Override
-	public ArrayList<Node<E>> getChildren(){
-
-		return new ArrayList<>();
-	}
-
-	public Node<E> getChild(int index){
-
-		return null;
-	}
-
-	@Override
-	public void addChild(int index, Node<E> childNode){}
-
-	@Override
-	public void addChild(Node<E> childNode){}
 }
