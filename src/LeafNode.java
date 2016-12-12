@@ -19,14 +19,17 @@ public class LeafNode<E extends Comparable<E>> extends Node<E> {
 	 * @return the next leaf node
 	 */
 	public LeafNode getNextLeaf(){
+
 		return nextLeaf;
 	}
+
 	
 	/**
 	 * Sets the next leaf node
 	 * @param leaf the node you wish to set as the next leaf
 	 */
 	public void setNextLeaf(LeafNode<E> leaf){
+
 		nextLeaf = leaf;
 	}
 
@@ -37,8 +40,13 @@ public class LeafNode<E extends Comparable<E>> extends Node<E> {
 	 */
 	@Override
 	public ArrayList<Node<E>> getChildren(){
-		return null;
+
+		return new ArrayList<>();
 	}
 
+	public Node<E> getChild(int index){
+
+		return null;
+	}
 
 }

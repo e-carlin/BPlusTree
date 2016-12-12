@@ -1,84 +1,142 @@
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Queue;
+import java.util.LinkedList;
+import java.util.Iterator;
 
 public class BPlusTree<E extends Comparable <E>>{
 
 	private final boolean DEBUG = true;
 
-	public Node<E> root;
-	public int degree;
-	
+	private Node<E> root;
+	private int degree;
+
 	public BPlusTree(int d){
 		degree = d;
 		root = null;
 	}
-	
+
 	public void insertValue(E value){
+
+		if(DEBUG){
+			System.out.println("Adding "+value+" to tree");
+		}
+
 		//Tree is empty so we can just create a leaf node and putValue the value
 		if(this.isEmpty()){
 			if(DEBUG){
-				System.out.println("BPLusTREE: Tree is empty so creating root and adding to it");
+				System.out.println("Tree is empty so creating root and adding to it");
 			}
 			root = new LeafNode<>(degree);
 			root.putValue(value);
 		}
 		else{
 			if(DEBUG){
-				System.out.println("BPLusTREE: Tree is not empty");
+				System.out.println("Tree is not empty");
 			}
 			//Tree is not empty so we must find the leaf where value should go
 			LeafNode<E> originalLeaf = findLeafFor(value, root);
 
 			if(DEBUG){
-				System.out.println("BPLusTREE: Found leaf node for "+value+" it is "+ originalLeaf);
+				System.out.println("Found leaf node for "+value+" it is "+ originalLeaf);
 			}
 
 			//The leaf node isn't full so we can just putValue into it!
 			if(!originalLeaf.isFull()){
-				if(DEBUG){
-					System.out.println("BPLusTREE: Leaf is not full so just adding to it");
+				if(DEBUG) {
+					System.out.println("Leaf is not full so just adding to it");
 				}
 				originalLeaf.putValue(value);
 			}
 
-			/** The node is full so we must split it and recurse **/
+			// The node is full so we must split it and recurse
 			else {
 				if(DEBUG){
-					System.out.println("BPLusTREE: Leaf is full so must do some splitting work!");
+					System.out.println("Leaf is full so must do some splitting work!");
 				}
 
-				//New node that will contain half of the old nodes values
-				LeafNode<E> rightLeaf = new LeafNode<E>(degree);
 
 				//First naively insert value into (now) overflown node
 				originalLeaf.putValue(value);
 
-				/** Copy second half of overflown nodes values into new node **/
-				for(int i = (int)Math.ceil((degree-1)/2); i< originalLeaf.sizeOfValues(); i++){
-					//Copy over the value
-					rightLeaf.putValue(originalLeaf.getValue(i));
-					//Remove it from the original node
-					originalLeaf.removeValue(i);
+
+				if( DEBUG){
+					System.out.println("Naively added value to leaf. Leaf is now "+originalLeaf);
+					System.out.println("Copying/deleting half of values from original leaf");
 				}
 
-				/** Adjust pointers between nodes and next leaf**/
+				//Copy second half of values to new leaf, remove values from original once copied
+				LeafNode<E> rightLeaf = this.moveValuesToNewLeaf(originalLeaf);
+
+				//Adjust pointers between nodes and next leaf
 				rightLeaf.setNextLeaf(originalLeaf.getNextLeaf());
 				originalLeaf.setNextLeaf(rightLeaf);
 
 				if(DEBUG){
-					System.out.println("BPLusTREE: The left leaf is "+originalLeaf);
-					System.out.println("BPLusTREE: The right leaf is "+rightLeaf);
-					System.out.println("BPLusTREE: Now going to propagate the split...");
+					System.out.println("The left leaf is "+originalLeaf);
+					System.out.println("The right leaf is "+rightLeaf);
+					System.out.println("Now going to propagate the split...");
 				}
 
 				//Let the parent know that it has a new child
 				this.propagateLeafNodeSplit(originalLeaf,  rightLeaf);
 			}
 		}
-		
+
 	}
 
 
+	/**
+	 * Prints the tree in level order
+	 * Adapted from Reddy's answer: http://stackoverflow.com/questions/2241513/java-printing-a-binary-tree-using-level-order-in-a-specific-format
+	 */
+	public void printTree() {
+		System.out.println("******** PRINTING TREE ********");
+
+		Queue<Node<E>> currentLevel = new LinkedList<>();
+		Queue<Node<E>> nextLevel = new LinkedList<>();
+
+		currentLevel.add(this.root);
+
+		while (!currentLevel.isEmpty()) {
+			System.out.println("Current level isn't empty");
+			Iterator<Node<E>> iter = currentLevel.iterator();
+			while (iter.hasNext()) {
+				Node<E> currentNode = iter.next();
+
+				System.out.println("Current node is "+currentNode);
+
+				nextLevel.addAll(currentNode.getChildren());
+
+				System.out.print(currentNode.getValues() + " ");
+			}
+			System.out.println();
+			currentLevel = nextLevel;
+			nextLevel = new LinkedList<>();
+
+		}
+
+	}
+
 	/*************** PRIVATE HELPER METHODS ******************/
+
+	/**
+	 * Copies half of of the values from the old leaf into a new leaf. Then deletes
+	 * the values from the original once they are copied.
+	 * @param originalLeaf the old leaf containing the values to be copied
+	 * @return the newly created leaf containg the values
+	 */
+	private LeafNode<E> moveValuesToNewLeaf(LeafNode<E> originalLeaf){
+		//Create new leaf node
+		LeafNode<E> rightLeaf = new LeafNode<E>(degree);
+
+		//Copy half of the original leaves values into it
+		rightLeaf.putCollectionOfValues(new ArrayList<E>(originalLeaf.subList((int)Math.ceil((degree-1)/2), originalLeaf.sizeOfValues())));
+
+		//Delete the copied values from the original leaf
+		originalLeaf.removeRange((int)Math.ceil((degree-1)/2), originalLeaf.sizeOfValues());
+
+		return rightLeaf;
+	}
 
 	/**
 	 * This method handles the splitting of a leaf node. It adjusts the parents pointers,
@@ -89,24 +147,28 @@ public class BPlusTree<E extends Comparable <E>>{
 	 */
 	private void propagateLeafNodeSplit(LeafNode<E> originalLeaf, LeafNode<E> newLeaf){
 		if(DEBUG){
-			System.out.println("BPLusTREE: Propagating a leaf split");
+			System.out.println("Propagating a leaf split");
 		}
 
-		/** If the parent is null then original leaf is the root **/
+		//If the parent is null then original leaf is the root
 		if(originalLeaf.getParent() == null){
+			if(DEBUG){
+				System.out.println("Parent is null so leaf was the root. Creating a new root...");
+			}
+
 			root = new InternalNode<E>(degree);
 			root.putValue(newLeaf.getValue(0));
 			//TODO: Handle pointers
 		}
 
-		/** The original leaf was not the root **/
+		//The original leaf was not the root **/
 
-			/** The parent is NOT full so we can just insert into it and adjust pointers **/
+		//The parent is NOT full so we can just insert into it and adjust pointers
 		else if(!originalLeaf.getParent().isFull()) {
 			//TODO: Complete
 		}
 
-			/** The parent is full so we must split it and propagate the split **/
+		// The parent is full so we must split it and propagate the split
 		else{
 			//TODO: split the node; propagate split into parent
 		}
@@ -153,14 +215,15 @@ public class BPlusTree<E extends Comparable <E>>{
 	}
 
 	private boolean rootIsLeaf(){
-		return root instanceof LeafNode ? true : false;
-		
+		return root instanceof LeafNode;
 	}
-	
+
 	private boolean isEmpty(){
 		return root == null;
 	}
-	
+
+
+
 	public String toString(){
 		if(this.isEmpty()){
 			return "The tree is empty";
