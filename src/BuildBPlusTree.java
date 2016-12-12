@@ -10,8 +10,12 @@ public class BuildBPlusTree {
 		tree.insertValue(1);
 		tree.insertValue(5);
 		tree.insertValue(88);
+		tree.insertValue(89);
+		tree.insertValue(90);
 
-//		tree.printTree();
+		System.out.println("\n");
+		tree.printTree();
+
 
 	}
 }

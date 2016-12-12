@@ -8,7 +8,7 @@ public abstract class Node<E extends Comparable<E>>{
 	//TODO: make private
 	private int degree;
 	private ArrayList<E> values;
-	private InternalNode<E> parent;
+	private Node<E> parent;
 	
 	public Node(int d){
 		parent = null;
@@ -28,6 +28,8 @@ public abstract class Node<E extends Comparable<E>>{
 	 * @return the child node
 	 */
 	public abstract Node<E> getChild(int index);
+
+	public abstract void setChild(int index, Node<E> childNode);
 	
 	public void putValue(E elemToInsert){
 		for(int i=0; i<values.size(); i++){
@@ -73,7 +75,7 @@ public abstract class Node<E extends Comparable<E>>{
 		values.subList(from, to).clear();
 	}
 
-	public InternalNode<E> getParent(){
+	public Node<E> getParent(){
 		return parent;
 	}
 
@@ -85,9 +87,10 @@ public abstract class Node<E extends Comparable<E>>{
 		return values.size() >= degree-1;
 	}
 
-	public void setParent(InternalNode<E> p){
+	public void setParent(Node<E> p){
 		parent = p;
 	}
+
 
 
 	//TODO: Remove, this is just for debugging

@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.Queue;
-import java.util.LinkedList;
-import java.util.Iterator;
+import java.util.*;
 
 public class BPlusTree<E extends Comparable <E>>{
 
@@ -97,16 +94,17 @@ public class BPlusTree<E extends Comparable <E>>{
 		currentLevel.add(this.root);
 
 		while (!currentLevel.isEmpty()) {
-			System.out.println("Current level isn't empty");
 			Iterator<Node<E>> iter = currentLevel.iterator();
 			while (iter.hasNext()) {
 				Node<E> currentNode = iter.next();
 
-				System.out.println("Current node is "+currentNode);
 
 				nextLevel.addAll(currentNode.getChildren());
 
-				System.out.print(currentNode.getValues() + " ");
+				System.out.print(currentNode.getValues());
+				if(iter.hasNext()){
+					System.out.print(" # ");
+				}
 			}
 			System.out.println();
 			currentLevel = nextLevel;
@@ -149,7 +147,7 @@ public class BPlusTree<E extends Comparable <E>>{
 			System.out.println("Propagating a leaf split");
 		}
 
-		//If the parent is null then original leaf is the root
+		//If the parent is null then originalLeaf is the root
 		if(originalLeaf.getParent() == null){
 			if(DEBUG){
 				System.out.println("Parent is null so leaf was the root. Creating a new root...");
@@ -157,7 +155,26 @@ public class BPlusTree<E extends Comparable <E>>{
 
 			root = new InternalNode<E>(degree);
 			root.putValue(newLeaf.getValue(0));
-			//TODO: Handle pointers
+
+			if(DEBUG){
+				System.out.println("New root is "+root+ " should contain the rightmost value of "+newLeaf);
+				System.out.println("Setting the nodes parent to root");
+				System.out.println("Setting the roots children to be the leaves");
+			}
+
+			originalLeaf.setParent(root);
+			newLeaf.setParent(root);
+
+
+			root.setChild(0, originalLeaf);
+			root.setChild(1, newLeaf);
+
+			if(DEBUG){
+				System.out.println("The roots children are "+ Arrays.toString(root.getChildren().toArray()));
+			}
+
+			//TODO: Parent is not null so we must insert rightmost value into parent and adjust pointers
+
 		}
 
 		//The original leaf was not the root **/

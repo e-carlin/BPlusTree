@@ -49,4 +49,6 @@ public class LeafNode<E extends Comparable<E>> extends Node<E> {
 		return null;
 	}
 
+	@Override
+	public void setChild(int index, Node<E> childNode){}
 }
