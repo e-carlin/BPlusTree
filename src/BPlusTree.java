@@ -6,7 +6,6 @@ import java.util.Iterator;
 public class BPlusTree<E extends Comparable <E>>{
 
 	private final boolean DEBUG = true;
-
 	private Node<E> root;
 	private int degree;
 
