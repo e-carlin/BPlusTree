@@ -36,6 +36,7 @@ public class LeafNode<E extends Comparable<E>> extends Node<E> {
 	//TODO: Think about this more is this really desired behavior??
 	/**
 	 * A leaf node has no children so return null
+	 * TODO: see if this can be changed to null
 	 * @return
 	 */
 	@Override
@@ -50,8 +51,8 @@ public class LeafNode<E extends Comparable<E>> extends Node<E> {
 	}
 
 	@Override
-	public void setChild(int index, Node<E> childNode){}
+	public void addChild(int index, Node<E> childNode){}
 
 	@Override
-	public void setChild(Node<E> childNode){}
+	public void addChild(Node<E> childNode){}
 }

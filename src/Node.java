@@ -16,13 +16,13 @@ public abstract class Node<E extends Comparable<E>>{
 		values = new ArrayList<E>();
 	}
 
-	public abstract ArrayList<Node<E>> getChildren();
+//	public abstract ArrayList<Node<E>> getChildren();
 
 	public abstract Node<E> getChild(int index);
 
-	public abstract void setChild(int index, Node<E> childNode);
+	public abstract void addChild(int index, Node<E> childNode);
 
-	public abstract void setChild(Node<E> childnode);
+	public abstract void addChild(Node<E> childnode);
 
 	/**
 	 * Inserts a value in sorted (ascending order)
@@ -53,6 +53,7 @@ public abstract class Node<E extends Comparable<E>>{
 	}
 
 	public int sizeOfValues(){
+
 		return values.size();
 	}
 
@@ -66,33 +67,40 @@ public abstract class Node<E extends Comparable<E>>{
 		values.remove(index);
 	}
 
-	public List<E> subList(int from, int to){
+	public List<E> subListValues(int from, int to){
+
 		return values.subList(from, to);
 	}
 
+
 	public void removeRange(int from, int to){
+
 		values.subList(from, to).clear();
 	}
 
 	public InternalNode<E> getParent(){
+
 		return parent;
 	}
 
 	public String toString(){
+
 		return Arrays.toString(values.toArray());
 	}
 
 	public boolean isFull(){
+
 		return values.size() >= degree-1;
 	}
 
 	public void setParent(InternalNode<E> p){
+
 		parent = p;
 	}
 
 
 
-	//TODO: Remove, this is just for debugging
+	//TODO: Remove, this is just for debugging, I don't think it is know probably need to keep
 	public ArrayList<E> getValues(){
 		return values;
 	}
