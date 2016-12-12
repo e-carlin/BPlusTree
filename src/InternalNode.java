@@ -22,14 +22,17 @@ public class InternalNode<E extends Comparable<E>> extends Node<E>{
 		return children.get(index);
 	}
 
-	public void setChild(int index, Node<E> node){
-		//If we really just want to append this node to the list of children
-		if(children.size() == index){
-			children.add(node);
-		}
-		else {
-			children.set(index, node);
-		}
+	/**
+	 * Sets the node at a specific index in the children list
+	 * @param index the index we wish to place the child node at
+	 * @param childNode the child node we wish to add to the list
+	 */
+	public void setChild(int index, Node<E> childNode){
+		children.set(index, childNode);
+	}
+
+	public void setChild(Node<E> childNode){
+		children.add(childNode);
 	}
 	
 }

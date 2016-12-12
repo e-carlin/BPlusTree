@@ -139,56 +139,74 @@ public class BPlusTree<E extends Comparable <E>>{
 	 * This method handles the splitting of a leaf node. It adjusts the parents pointers,
 	 * inserts the smallest value from the new right node into the parent, and then calls
 	 * another method if the parent now needs to be split
-	 * @param originalLeaf the original leaf that was split (now is the left leaf)
-	 * @param newLeaf the new leaf that was created (the next of the original leaf)
+	 * @param leftLeaf the original leaf that was split (now is the left leaf)
+	 * @param rightLeaf the new leaf that was created (the next of the original leaf)
 	 */
-	private void propagateLeafNodeSplit(LeafNode<E> originalLeaf, LeafNode<E> newLeaf){
+	private void propagateLeafNodeSplit(LeafNode<E> leftLeaf, LeafNode<E> rightLeaf){
 		if(DEBUG){
 			System.out.println("Propagating a leaf split");
 		}
 
 		//If the parent is null then originalLeaf is the root
-		if(originalLeaf.getParent() == null){
-			if(DEBUG){
+		if(leftLeaf.getParent() == null) {
+			if (DEBUG) {
 				System.out.println("Parent is null so leaf was the root. Creating a new root...");
 			}
 
 			root = new InternalNode<E>(degree);
-			root.putValue(newLeaf.getValue(0));
+			root.putValue(rightLeaf.getValue(0));
 
-			if(DEBUG){
-				System.out.println("New root is "+root+ " should contain the rightmost value of "+newLeaf);
+			if (DEBUG) {
+				System.out.println("New root is " + root + " should contain the smallest value of " + rightLeaf);
 				System.out.println("Setting the nodes parent to root");
 				System.out.println("Setting the roots children to be the leaves");
 			}
 
-			originalLeaf.setParent(root);
-			newLeaf.setParent(root);
+			leftLeaf.setParent((InternalNode<E>) root);
+			rightLeaf.setParent((InternalNode<E>) root);
 
 
-			root.setChild(0, originalLeaf);
-			root.setChild(1, newLeaf);
+			//*** Order is important here **** MUST set left then right because left contains smaller values the righ
+			root.setChild(leftLeaf);
+			root.setChild(rightLeaf);
 
-			if(DEBUG){
-				System.out.println("The roots children are "+ Arrays.toString(root.getChildren().toArray()));
+			if (DEBUG) {
+				System.out.println("The roots children are " + Arrays.toString(root.getChildren().toArray()));
 			}
-
-			//TODO: Parent is not null so we must insert rightmost value into parent and adjust pointers
-
 		}
-
-		//The original leaf was not the root **/
-
-		//The parent is NOT full so we can just insert into it and adjust pointers
-		else if(!originalLeaf.getParent().isFull()) {
-			//TODO: Complete
-		}
-
-		// The parent is full so we must split it and propagate the split
 		else{
-			//TODO: split the node; propagate split into parent
-		}
+			//Parent was not null so we must insert into it
+				if(DEBUG){
+					System.out.println("Parent was not null so must insert into parent");
+				}
 
+				InternalNode<E> parent = leftLeaf.getParent();
+
+				//Parent is NOT full so we can just insert into it and adjust pointers
+				if(!parent.isFull()) {
+					//TODO: Fix this code it is not working right (Run build tree and see the printed tree to understand why)
+					if (DEBUG) {
+						System.out.println("Parent is NOT full so we can just insert into it");
+					}
+
+					int insertIndex = parent.putValue(rightLeaf.getValue(0));
+
+					if (DEBUG) {
+						System.out.println("The smallest value was " + rightLeaf.getValue(0) + " it was inserted at " + insertIndex
+								+ " in " + parent);
+
+					}
+
+					parent.setChild(rightLeaf);
+
+					if (DEBUG) {
+						System.out.println("Parent now has the children "+Arrays.toString(parent.getChildren().toArray()));
+					}
+				}
+
+
+		}
+			//TODO: Parent is full so we must propagate a parent split
 	}
 
 

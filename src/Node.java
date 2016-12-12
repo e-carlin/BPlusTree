@@ -8,7 +8,7 @@ public abstract class Node<E extends Comparable<E>>{
 	//TODO: make private
 	private int degree;
 	private ArrayList<E> values;
-	private Node<E> parent;
+	private InternalNode<E> parent;
 	
 	public Node(int d){
 		parent = null;
@@ -16,22 +16,20 @@ public abstract class Node<E extends Comparable<E>>{
 		values = new ArrayList<E>();
 	}
 
-	/**
-	 * Gets all of the children nodes
-	 * @return a list of all of the children
-	 */
 	public abstract ArrayList<Node<E>> getChildren();
 
-	/**
-	 * Gets a child at a specific index
-	 * @param index the index of the child
-	 * @return the child node
-	 */
 	public abstract Node<E> getChild(int index);
 
 	public abstract void setChild(int index, Node<E> childNode);
-	
-	public void putValue(E elemToInsert){
+
+	public abstract void setChild(Node<E> childnode);
+
+	/**
+	 * Inserts a value in sorted (ascending order)
+	 * @param elemToInsert the element we wish to insert
+	 * @return the index where the element was inserted
+	 */
+	public int putValue(E elemToInsert){
 		for(int i=0; i<values.size(); i++){
 			//elemToInsert is bigger than this element so keep going
 			if(elemToInsert.compareTo(values.get(i)) > 0){
@@ -39,10 +37,11 @@ public abstract class Node<E extends Comparable<E>>{
 			}
 			//elemToInsert is <= this element so putValue it here
 			values.add(i, elemToInsert);
-			return;
+			return i;
 		}
 		//All elements where < elemToInsert so append to end of list
 		values.add(elemToInsert);
+		return values.size()-1;
 	}
 
 	/**
@@ -75,7 +74,7 @@ public abstract class Node<E extends Comparable<E>>{
 		values.subList(from, to).clear();
 	}
 
-	public Node<E> getParent(){
+	public InternalNode<E> getParent(){
 		return parent;
 	}
 
@@ -87,7 +86,7 @@ public abstract class Node<E extends Comparable<E>>{
 		return values.size() >= degree-1;
 	}
 
-	public void setParent(Node<E> p){
+	public void setParent(InternalNode<E> p){
 		parent = p;
 	}
 
