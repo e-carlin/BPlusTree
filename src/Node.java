@@ -21,13 +21,13 @@ public class Node<E extends Comparable<E>>{
 	 * @param elemToInsert the element we wish to insert
 	 * @return the index where the element was inserted
 	 */
-	public int putValue(E elemToInsert){
+	public int addValue(E elemToInsert){
 		for(int i=0; i<values.size(); i++){
 			//elemToInsert is bigger than this element so keep going
 			if(elemToInsert.compareTo(values.get(i)) > 0){
 				continue;
 			}
-			//elemToInsert is <= this element so putValue it here
+			//elemToInsert is <= this element so addValue it here
 			values.add(i, elemToInsert);
 			return i;
 		}
@@ -37,11 +37,14 @@ public class Node<E extends Comparable<E>>{
 	}
 
 	/**
-	 * CAUTION: This naively adds elements to the node. It makes not effort to sort the values
+	 * Adds a collection of values to the node in sorted order.
 	 * @param valuesToAdd the values we wish to add
 	 */
-	public void putCollectionOfValues(ArrayList<E> valuesToAdd){
-		values.addAll(valuesToAdd);
+	public void addCollectionOfValues(ArrayList<E> valuesToAdd){
+
+		for(E value : valuesToAdd){
+			this.addValue(value);
+		}
 	}
 
 	public int sizeOfValues(){
@@ -65,7 +68,7 @@ public class Node<E extends Comparable<E>>{
 	}
 
 
-	public void removeRange(int from, int to){
+	public void removeRangeOfValues(int from, int to){
 
 		values.subList(from, to).clear();
 	}
@@ -94,6 +97,7 @@ public class Node<E extends Comparable<E>>{
 
 	//TODO: Remove, this is just for debugging, I don't think it is know probably need to keep
 	public ArrayList<E> getValues(){
+
 		return values;
 	}
 }

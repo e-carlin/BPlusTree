@@ -23,29 +23,35 @@ public class InternalNode<E extends Comparable<E>> extends Node<E>{
 		return children.get(index);
 	}
 
-	/**
-	 * Adds the node at a specific index in the children list
-	 * @param index the index we wish to place the child node at
-	 * @param childNode the child node we wish to add to the list
-	 */
-	public void addChild(int index, Node<E> childNode){
-		children.add(index, childNode);
-	}
 
-	//TODO: Fix this, the node should be added where it belongs not just to the end of the list
 	/**
 	 * Appends the node to the end of the children list
-	 * @param childNode the node we want to add
+	 * @param nodeToAdd the node we want to add
 	 */
-	public void addChild(Node<E> childNode){
-		children.add(childNode);
+	public void addChild(Node<E> nodeToAdd){
+		System.out.println("In add child");
+
+		for(int i=0; i<children.size(); i++){
+			System.out.println("In loop");
+			//If nodeToAdd is bigger than the child at this index keep going
+			if(nodeToAdd.getValue(0).compareTo(this.getChild(i).getValue(0)) > 0){
+				continue;
+			}
+			//nodeToAdd is <= this child
+			children.add(i, nodeToAdd);
+			return;
+		}
+		//All children were < nodeToAdd so append to end of list
+		children.add(nodeToAdd);
 	}
 
 	public int sizeOfChildren(){
+
 		return children.size();
 	}
 
 	public List<Node<E>> subListChildren(int from, int to){
+
 		return children.subList(from, to);
 	}
 
@@ -54,8 +60,14 @@ public class InternalNode<E extends Comparable<E>> extends Node<E>{
 	 * This should work fine becasue they are being copied over in sorted order
 	 * @param childrenToAdd the children pointers we wish to add
 	 */
-	public void putCollectionOfChildren(ArrayList<Node<E>> childrenToAdd){
+	public void addCollectionOfChildren(ArrayList<Node<E>> childrenToAdd){
+
 		children.addAll(childrenToAdd);
 	}
-	
+
+
+	public void removeRangeOfChildren(int from, int to){
+
+		children.subList(from, to).clear();
+	}
 }
