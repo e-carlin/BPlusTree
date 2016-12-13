@@ -29,10 +29,8 @@ public class InternalNode<E extends Comparable<E>> extends Node<E>{
 	 * @param nodeToAdd the node we want to add
 	 */
 	public void addChild(Node<E> nodeToAdd){
-		System.out.println("In add child");
 
 		for(int i=0; i<children.size(); i++){
-			System.out.println("In loop");
 			//If nodeToAdd is bigger than the child at this index keep going
 			if(nodeToAdd.getValue(0).compareTo(this.getChild(i).getValue(0)) > 0){
 				continue;
@@ -69,5 +67,18 @@ public class InternalNode<E extends Comparable<E>> extends Node<E>{
 	public void removeRangeOfChildren(int from, int to){
 
 		children.subList(from, to).clear();
+	}
+
+	public void setParentToBeThisNode(){
+		for(Node<E> child : children){
+			child.setParent(this);
+		}
+	}
+
+	//TODO:Remove, this is just for test
+	public void printChildrensParents(){
+		for(Node<E> child : children){
+			System.out.println("The child "+ child.getValues()+" parent is "+child.getParent());
+		}
 	}
 }

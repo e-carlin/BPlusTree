@@ -2,7 +2,7 @@ import java.util.*;
 
 public class BPlusTree<E extends Comparable <E>>{
 
-	private final boolean DEBUG = true;
+	private final boolean DEBUG = false;
 	private Node<E> root;
 	private int degree;
 
@@ -34,7 +34,8 @@ public class BPlusTree<E extends Comparable <E>>{
 			LeafNode<E> originalLeaf = findLeafFor(value, root);
 
 			if(DEBUG){
-				System.out.println("Found leaf node for "+value+" it is "+ originalLeaf);
+				System.out.println("Found leaf node for "+value+" is "+ originalLeaf);
+				System.out.println("Leaf's parent is "+originalLeaf.getParent());
 			}
 
 			//The leaf node isn't full so we can just addValue into it!
@@ -58,9 +59,7 @@ public class BPlusTree<E extends Comparable <E>>{
                 this.splitLeafNode(originalLeaf);
 			}
 		}
-
 	}
-
 
 	/**
 	 * Prints the tree in level order
@@ -108,13 +107,13 @@ public class BPlusTree<E extends Comparable <E>>{
 
 	/**
 	 * Takes the result of a node splitting and inserts the two new nodes
-	 * values and pointers into their parent
-	 * @param leftLeaf the left leaf (this is the original leaf that overflowed)
-	 * @param rightLeaf the right leaf (this is the new leaf that took on the overflowed values and possibly pointers)
+	 * values and  pointers into their parent
+	 * @param leftNode the left node (this is the original node that overflowed)
+	 * @param rightNode the node leaf (this is the new node that took on the overflowed values and possibly pointers)
 	 */
-	private void insertInParent(Node<E> leftLeaf, Node<E> rightLeaf){
-		//The parent of the original leaf is null so we must be at the root of the tree
-		if(leftLeaf.getParent() == null){
+	private void insertInParent(Node<E> leftNode, Node<E> rightNode){
+		//The parent of the original node is null so we must be at the root of the tree
+		if(leftNode.getParent() == null){
 			if(DEBUG){
 				System.out.println("Parent is null so creating a new root and updating values/pointers");
 			}
@@ -123,25 +122,27 @@ public class BPlusTree<E extends Comparable <E>>{
 			this.root = new InternalNode<>(degree);
 
 			//set left and right's parent to new root
-			leftLeaf.setParent((InternalNode<E>) this.root);
-			rightLeaf.setParent((InternalNode<E>)this.root);
+			leftNode.setParent((InternalNode<E>) this.root);
+			rightNode.setParent((InternalNode<E>)this.root);
 
 			//Insert the smallest value of right split node into parent
-			root.addValue(rightLeaf.getValue(0));
+			root.addValue(rightNode.getValue(0));
 
 			//If right leaf is an internal node then the value it gives to its parent is removed from it
-			if(rightLeaf instanceof InternalNode){
-				rightLeaf.removeValue(0);
+			if(rightNode instanceof InternalNode){
+				rightNode.removeValue(0);
 			}
 
-			((InternalNode<E>)root).addChild(leftLeaf);
-			((InternalNode<E>)root).addChild(rightLeaf);
+			((InternalNode<E>)root).addChild(leftNode);
+			((InternalNode<E>)root).addChild(rightNode);
 
 			if (DEBUG) {
 				System.out.println("New root is created and pointers are updated");
 				System.out.println("The root is "+root);
 				System.out.println("The roots children are " + Arrays.toString(((InternalNode)root).getChildren().toArray()));
 				}
+
+
 		}
 
 		//Parent was not null so must insert into it
@@ -151,10 +152,9 @@ public class BPlusTree<E extends Comparable <E>>{
 			}
 
 			//Get the parent
-			InternalNode<E> parent = leftLeaf.getParent();
+			InternalNode<E> parent = leftNode.getParent();
 			//Set right's parent to be the same as left's parent
-			//TODO: Is this necessary?? Do some checking to see if it is ever null when we get to here; It probably is necessary
-			rightLeaf.setParent(parent);
+			rightNode.setParent(parent);
 
 			//Parent has space so we can just insert into it
 			if(!parent.isFull()) {
@@ -162,47 +162,45 @@ public class BPlusTree<E extends Comparable <E>>{
 					System.out.println("Parent is NOT full so we can just insert into it");
 				}
 
-				int insertIndex = parent.addValue(rightLeaf.getValue(0));
+				//Add the value into the parent
+				int insertIndex = parent.addValue(rightNode.getValue(0));
 
-				if (DEBUG) {
-					System.out.println("The smallest value was " + rightLeaf.getValue(0) + " it was inserted at " + insertIndex
-							+ " in " + parent);
-
+				//If right leaf is an internal node then the value it gives to its parent is removed from it
+				if(rightNode instanceof InternalNode){
+					rightNode.removeValue(0);
 				}
 
 				//Insert the new child into the list of children in the parent
-				//The child is inserted at an index of +1 above the index
-				//where the key value for the node was inserted into the parent
-				//This is because there are 1 more entries in the children list
-				//than the values list
-				parent.addChild(rightLeaf);
+				parent.addChild(rightNode);
 
 				if (DEBUG) {
-					System.out.println("Parent now has the children "+Arrays.toString(parent.getChildren().toArray()));
-				}
+					System.out.println("Parent is now "+parent);
 
+				}
 			}
-			//Parent is full so we must split it and then insert in its parent
+			//Parent is full so we must split it and then new split in its parent
 			else {
 				if (DEBUG) {
 					System.out.println("Parent is full so we must do some internal node splitting work!");
-					System.out.println("Naively add to the parent and then pass off to the slitInternalNode method");
 				}
-
-				//TODO: Finish this in tandem with the splitInternalNode method
-				//Pretty much I think we can naively add call the split internal node method and then
-				//it will propagate the split up
 
 				//naively insert the value into it
-				parent.addValue(rightLeaf.getValue(0));
-				if(rightLeaf instanceof InternalNode){
+				parent.addValue(rightNode.getValue(0));
+				if(rightNode instanceof InternalNode){
 					if(DEBUG) {
-						System.out.println("Right leaf is an internal node so we added its smalles value into parent and removed it from itself");
+						System.out.println("Right leaf is an internal node so we removed smallest value from it");
 					}
-					rightLeaf.removeValue(0);
+					rightNode.removeValue(0);
 				}
 				//Naively insert the pointer into it
+				parent.addChild(rightNode);
+				if(DEBUG) {
+					System.out.println("We naively added the values and pointers to the now overflowing parent");
+					this.printTree();
+				}
 				//Call split internal node
+				//TODO: Call split inernal node and then it will split and call insert in parent
+				this.splitInternalNode(parent);
 			}
 		}
 	}
@@ -216,10 +214,20 @@ public class BPlusTree<E extends Comparable <E>>{
 	    if(DEBUG){
             System.out.println("Copying over and deleting values and children from overflownNode to new rightNode");
         }
-        //Copy over and delete values to new node
+        //Copy over and delete values/pointers to new node
         InternalNode<E> rightNode = moveValuesAndPointersToNewInternalNode(overflownNode);
+		if(DEBUG){
+			System.out.println("Left node is ");
+			System.out.println(overflownNode);
+			System.out.println("Children are "+overflownNode.getChildren());
+			System.out.println("Right node is");
+			System.out.println(rightNode);
+			System.out.println("Children are "+rightNode.getChildren());
+			System.out.println("Node is split now inserting in parent");
 
-        //TODO: finish filling out this method
+		}
+		//TODO: Insert into parent
+		this.insertInParent(overflownNode, rightNode);
     }
 
 	/**
@@ -258,26 +266,16 @@ public class BPlusTree<E extends Comparable <E>>{
 		InternalNode<E> rightNode = new InternalNode<E>(degree);
 
 		//Copy over half of the values
-		rightNode.addCollectionOfValues(new ArrayList<>(overflownNode.subListValues((int)Math.ceil((degree-1)/2), overflownNode.sizeOfValues())));
+		rightNode.addCollectionOfValues(new ArrayList<>(overflownNode.subListValues((int)Math.ceil((degree-1)/2.0), overflownNode.sizeOfValues())));
 		//Copy over half of the children pointers
-        rightNode.addCollectionOfChildren(new ArrayList<>(overflownNode.subListChildren((int)Math.ceil((degree+1)/2), overflownNode.sizeOfChildren())));
+        rightNode.addCollectionOfChildren(new ArrayList<>(overflownNode.subListChildren((int)Math.ceil((degree+1)/2.0), overflownNode.sizeOfChildren())));
+        //set the child pointers to point to new node
+		rightNode.setParentToBeThisNode();
 
-
-
-
-        //TODO:Complete
         //Delete the copied values from the overflown leaf
-        overflownNode.removeRangeOfValues((int)Math.ceil((degree-1)/2), overflownNode.sizeOfValues());
+        overflownNode.removeRangeOfValues((int)Math.ceil((degree-1)/2.0), overflownNode.sizeOfValues());
         //Delete the copied children pointers from overflown leaf
-        overflownNode.removeRangeOfChildren((int)Math.ceil((degree+1)/2), overflownNode.sizeOfChildren());
-
-		System.out.println((Arrays.toString(rightNode.getValues().toArray())));
-		System.out.println(Arrays.toString(rightNode.getChildren().toArray()));
-
-		System.out.println();
-		System.out.println((Arrays.toString(overflownNode.getValues().toArray())));
-		System.out.println(Arrays.toString(overflownNode.getChildren().toArray()));
-
+        overflownNode.removeRangeOfChildren((int)Math.ceil((degree+1)/2.0), overflownNode.sizeOfChildren());
 
 		return rightNode;
     }
@@ -293,9 +291,10 @@ public class BPlusTree<E extends Comparable <E>>{
         LeafNode<E> rightLeaf = new LeafNode<E>(degree);
 
         //Copy half of the original leaves values into it
-        rightLeaf.addCollectionOfValues(new ArrayList<E>(overflownLeaf.subListValues((int)Math.ceil((degree-1)/2), overflownLeaf.sizeOfValues())));
-        //Delete the copied values from the overflown leaf
-        overflownLeaf.removeRangeOfValues((int)Math.ceil((degree-1)/2), overflownLeaf.sizeOfValues());
+        rightLeaf.addCollectionOfValues(new ArrayList<E>(overflownLeaf.subListValues((int)Math.ceil((degree-1)/2.0), overflownLeaf.sizeOfValues())));
+
+		//Delete the copied values from the overflown leaf
+        overflownLeaf.removeRangeOfValues((int)Math.ceil((degree-1)/2.0), overflownLeaf.sizeOfValues());
 
         return rightLeaf;
     }
