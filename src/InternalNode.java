@@ -1,23 +1,40 @@
-
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * An internal node for a B+ Tree. The node has a list of values and a list of
+ * children
+ * @author Evan Carlin
+ */
 public class InternalNode<E extends Comparable<E>> extends Node<E>{
 
 	//A list of pointers to children nodes
 	private ArrayList<Node<E>> children;
 
+	/**
+	 * Constructs an InternalNode with a give degree
+	 * @param degree the degree of the node
+	 */
 	public InternalNode(int degree) {
 
 		super(degree);
-		children = new ArrayList<Node<E>>();
+		children = new ArrayList<>();
 	}
 
+	/**
+	 * Returns all of the children of this node
+	 * @return all of the children
+	 */
 	public ArrayList<Node<E>> getChildren(){
 
 		return children;
 	}
 
+	/**
+	 * Returns the child at a specific index
+	 * @param index the index of the child we want
+	 * @return the child at index
+	 */
 	public Node<E> getChild(int index){
 
 		return children.get(index);
@@ -25,7 +42,7 @@ public class InternalNode<E extends Comparable<E>> extends Node<E>{
 
 
 	/**
-	 * Appends the node to the end of the children list
+	 * Adds a child in sorted order to the list of children
 	 * @param nodeToAdd the node we want to add
 	 */
 	public void addChild(Node<E> nodeToAdd){
@@ -43,42 +60,53 @@ public class InternalNode<E extends Comparable<E>> extends Node<E>{
 		children.add(nodeToAdd);
 	}
 
+	/**
+	 * The number of children elements
+	 * @return the number
+	 */
 	public int sizeOfChildren(){
 
 		return children.size();
 	}
 
+	/**
+	 * Gets a sublist of children
+	 * @param from the beginning index (inclusive)
+	 * @param to the ending index (exclusive)
+	 * @return the sublist of children
+	 */
 	public List<Node<E>> subListChildren(int from, int to){
 
 		return children.subList(from, to);
 	}
 
 	/**
-	 * CAUTION: This naively adds elements to the node. It makes not effort to sort the values.
-	 * This should work fine becasue they are being copied over in sorted order
+	 * Adds a list of children (in sorted order) to the chidlren list
 	 * @param childrenToAdd the children pointers we wish to add
 	 */
 	public void addCollectionOfChildren(ArrayList<Node<E>> childrenToAdd){
 
-		children.addAll(childrenToAdd);
+		for(Node<E> child : childrenToAdd){
+			this.addChild(child);
+		}
 	}
 
-
+	/**
+	 * Removes a range of children pointers
+	 * @param from the start index (inclusive)
+	 * @param to the end index (exclusive)
+	 */
 	public void removeRangeOfChildren(int from, int to){
 
 		children.subList(from, to).clear();
 	}
 
+	/**
+	 * Takes all of the children and sets their parent field to point to this node.
+	 */
 	public void setParentToBeThisNode(){
 		for(Node<E> child : children){
 			child.setParent(this);
-		}
-	}
-
-	//TODO:Remove, this is just for test
-	public void printChildrensParents(){
-		for(Node<E> child : children){
-			System.out.println("The child "+ child.getValues()+" parent is "+child.getParent());
 		}
 	}
 }

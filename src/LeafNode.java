@@ -33,4 +33,8 @@ public class LeafNode<E extends Comparable<E>> extends Node<E> {
 		nextLeaf = leaf;
 	}
 
+	public boolean contains(E value){
+		return this.values.contains(value);
+	}
+
 }
