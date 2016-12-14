@@ -1,5 +1,15 @@
-import java.util.*;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.Arrays;
 
+/**
+ * A class to construct a B+ Tree
+ * The tree supports insertion, searching, and level order printing
+ * @author Evan Carlin
+ * @param <E>
+ */
 public class BPlusTree<E extends Comparable <E>>{
 
 	private final boolean DEBUG = false; //For testing purposes
@@ -12,8 +22,13 @@ public class BPlusTree<E extends Comparable <E>>{
 	 * @param d the degree of the nodes
 	 */
 	public BPlusTree(int d){
-		degree = d;
-		root = null;
+		if(d <3){
+			throw new IllegalArgumentException("The degree specified is <4");
+		}
+		else {
+			degree = d;
+			root = null;
+		}
 	}
 
 	/**
@@ -23,7 +38,7 @@ public class BPlusTree<E extends Comparable <E>>{
 	public void insertValue(E value){
 
 		if(DEBUG){
-		    this.printTree();
+			System.out.println(this.toString());
 			System.out.println("\nAdding "+value+" to tree");
 		}
 
@@ -72,12 +87,11 @@ public class BPlusTree<E extends Comparable <E>>{
 	 * Prints the tree in level order
 	 * Adapted from Reddy's answer: http://stackoverflow.com/questions/2241513/java-printing-a-binary-tree-using-level-order-in-a-specific-format
 	 */
-	public void printTree() {
-		System.out.println("******** PRINTING TREE ********");
+	public String toString() {
+		String treeString = "******** PRINTING TREE ********\n";
 
 		if(this.isEmpty()){
-            System.out.println("[]");
-            return;
+            return treeString+"[]";
         }
 
 		Queue<Node<E>> currentLevel = new LinkedList<>(); //The current level we are examinig
@@ -95,17 +109,17 @@ public class BPlusTree<E extends Comparable <E>>{
                     nextLevel.addAll(((InternalNode)currentNode).getChildren()); //Add the nodes children to the nextLevel queue
                 }
 
-				System.out.print(currentNode.getValues()); //print the current level
+				treeString += currentNode.getValues(); //print the current level
 				if(iter.hasNext()){
-					System.out.print(" # "); //Print a delimiter between nodes in the same level
+					treeString +=" # "; //Print a delimiter between nodes in the same level
 				}
 			}
-			System.out.println();
+			treeString += "\n";
 			currentLevel = nextLevel; //Jump to the next level
 			nextLevel = new LinkedList<>(); //Reset
 
 		}
-
+		return treeString;
 	}
 
 	/**
@@ -207,7 +221,7 @@ public class BPlusTree<E extends Comparable <E>>{
 				parent.addChild(rightNode);
 				if(DEBUG) {
 					System.out.println("We naively added the values and pointers to the now overflowing parent");
-					this.printTree();
+					System.out.println(this.toString());
 				}
 				//Split the now overflowing node
 				this.splitInternalNode(parent);
