@@ -91,7 +91,7 @@ public class BPlusTree<E extends Comparable <E>>{
 		String treeString = "******** PRINTING TREE ********\n";
 
 		if(this.isEmpty()){
-            return treeString+"[]";
+            return treeString+"[] #\n";
         }
 
 		Queue<Node<E>> currentLevel = new LinkedList<>(); //The current level we are examinig
@@ -114,7 +114,14 @@ public class BPlusTree<E extends Comparable <E>>{
 					treeString +=" # "; //Print a delimiter between nodes in the same level
 				}
 			}
-			treeString += "\n";
+			//Don't add a new line to the final level
+			if(iter.hasNext()){
+				treeString += " #";
+			}
+			else {
+				treeString += " #\n";
+			}
+
 			currentLevel = nextLevel; //Jump to the next level
 			nextLevel = new LinkedList<>(); //Reset
 
