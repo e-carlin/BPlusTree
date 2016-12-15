@@ -91,7 +91,7 @@ public class BPlusTree<E extends Comparable <E>>{
 		String treeString = "******** PRINTING TREE ********\n";
 
 		if(this.isEmpty()){
-            return treeString+"[] #\n";
+            return treeString+"[] #";
         }
 
 		Queue<Node<E>> currentLevel = new LinkedList<>(); //The current level we are examinig
@@ -114,7 +114,7 @@ public class BPlusTree<E extends Comparable <E>>{
 					treeString +=" # "; //Print a delimiter between nodes in the same level
 				}
 			}
-			//Don't add a new line to the final level
+			//Don't add a new lin
 			if(iter.hasNext()){
 				treeString += " #";
 			}
@@ -126,7 +126,7 @@ public class BPlusTree<E extends Comparable <E>>{
 			nextLevel = new LinkedList<>(); //Reset
 
 		}
-		return treeString;
+		return treeString; //Remove last \n
 	}
 
 	/**
@@ -350,26 +350,13 @@ public class BPlusTree<E extends Comparable <E>>{
 		else{
 			//Look through this nodes values to find which pointer we should follow
 			for(int i=0; i<localRoot.sizeOfValues(); i++){
-				//Value should should go in leftmost subtree
-				if(i ==0 && value.compareTo(localRoot.getValue(i)) < 0){
-					return findLeafForHelper(value, ((InternalNode<E>)localRoot).getChildren().get(0));
-				}
-
-				//Value should go in rightmost pointers subtree
-				//TODO: The check after the && is extraneous we will only ever get to here in the loop if it true
-				else if(i==localRoot.sizeOfValues()-1 && value.compareTo(localRoot.getValue(i)) >= 0){
-					return findLeafForHelper(value, ((InternalNode<E>)localRoot).getChildren().get(i+1));
-				}
-
-				//Value should go in one of the internal pointers subtree
-				else if(value.compareTo(localRoot.getValue(i)) >= 0 && value.compareTo(localRoot.getValue(i+1)) < 0) {
-					// i <= value < i+1; so it value goes in the i+1 childs subtree
-					return findLeafForHelper(value, ((InternalNode<E>)localRoot).getChildren().get(i + 1));
+				//value < root.value[i] so we should recurse on this child
+				if(value.compareTo(localRoot.getValue(i)) < 0){
+					return findLeafForHelper(value, ((InternalNode<E>)localRoot).getChild(i));
 				}
 			}
 		}
-		//This should never be reached
-		return null;
+		return findLeafForHelper(value, ((InternalNode<E>)localRoot).getChild(((InternalNode<E>)localRoot).sizeOfChildren()-1));
 	}
 
 
