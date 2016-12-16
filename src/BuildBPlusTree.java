@@ -1,3 +1,4 @@
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.util.Scanner;
 import java.io.File;
@@ -9,6 +10,7 @@ import java.io.File;
  */
 public class BuildBPlusTree {
     public static void main(String[] args) {
+
         boolean promptUser = true;
 
         while (promptUser) {
@@ -59,8 +61,8 @@ public class BuildBPlusTree {
                     System.out.println("Exiting...");
                     System.exit(1);
                 }
-            } catch (Exception e) {
-                System.out.println("The input file could not be found");
+            } catch (java.io.IOException e) {
+                System.out.println("There was a problem with the given files.");
                 System.out.println("Exiting...");
                 System.exit(1);
             }

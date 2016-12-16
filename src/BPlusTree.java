@@ -35,27 +35,29 @@ public class BPlusTree<E extends Comparable<E>> {
      */
     public void insertValue(E value) {
 
-        //Tree is empty so we can just create a leaf node and addValue the value
-        if (this.isEmpty()) {
+        if(!this.search(value)) { //Only add values that aren't already in the tree
+            //Tree is empty so we can just create a leaf node and addValue the value
+            if (this.isEmpty()) {
 
-            //Create the root and add the value to it
-            root = new LeafNode<>(degree);
-            root.addValue(value);
-        } else {
-            //Tree is not empty so we must find the leaf where value should go
-            LeafNode<E> originalLeaf = findLeafFor(value);
+                //Create the root and add the value to it
+                root = new LeafNode<>(degree);
+                root.addValue(value);
+            } else {
+                //Tree is not empty so we must find the leaf where value should go
+                LeafNode<E> leafToInsertValueIn = findLeafFor(value);
 
-            //The leaf node isn't full so we can just add the value into it!
-            if (!originalLeaf.isFull()) {
-                originalLeaf.addValue(value);
-            }
+                //The leaf node isn't full so we can just add the value into it!
+                if (!leafToInsertValueIn.isFull()) {
+                    leafToInsertValueIn.addValue(value);
+                }
 
-            // The node is full so we must split it and recurse
-            else {
-                //First naively insert value into (now) overflown node
-                originalLeaf.addValue(value);
-                //Split the now overflown node
-                this.splitLeafNode(originalLeaf);
+                // The node is full so we must split it and recurse
+                else {
+                    //First naively insert value into (now) overflown node
+                    leafToInsertValueIn.addValue(value);
+                    //Split the now overflown node
+                    this.splitLeafNode(leafToInsertValueIn);
+                }
             }
         }
     }
@@ -113,6 +115,9 @@ public class BPlusTree<E extends Comparable<E>> {
      */
     public boolean search(E value) {
         LeafNode<E> leafForValue = findLeafFor(value);
+        if(leafForValue == null){ //No leaf exists so the tree is empty
+            return false; //If the tree is empty then it doesn't contain the value we were looking for
+        }
         return leafForValue.contains(value);
 
     }
@@ -277,21 +282,24 @@ public class BPlusTree<E extends Comparable<E>> {
      * @return the leaf node where value should be inserted
      */
     private LeafNode<E> findLeafForHelper(E value, Node<E> localRoot) {
-        //We have reached a leaf so this node is where value should be placed (naive, the leaf could be full)
-        if (localRoot instanceof LeafNode) {
-            return (LeafNode<E>) localRoot;
-        }
-        //We still have some of the tree to traverse to get down to leaves
-        else {
-            //Look through this nodes values to find which pointer we should follow
-            for (int i = 0; i < localRoot.sizeOfValues(); i++) {
-                //value < root.value[i] so we should recurse on this child
-                if (value.compareTo(localRoot.getValue(i)) < 0) {
-                    return findLeafForHelper(value, ((InternalNode<E>) localRoot).getChild(i));
+        if(localRoot != null) { //if localRoot is null then the tree was empty
+            //We have reached a leaf so this node is where value should be placed (naive, the leaf could be full)
+            if (localRoot instanceof LeafNode) {
+                return (LeafNode<E>) localRoot;
+            }
+            //We still have some of the tree to traverse to get down to leaves
+            else {
+                //Look through this nodes values to find which pointer we should follow
+                for (int i = 0; i < localRoot.sizeOfValues(); i++) {
+                    //value < root.value[i] so we should recurse on this child
+                    if (value.compareTo(localRoot.getValue(i)) < 0) {
+                        return findLeafForHelper(value, ((InternalNode<E>) localRoot).getChild(i));
+                    }
                 }
             }
+            return findLeafForHelper(value, ((InternalNode<E>) localRoot).getChild(((InternalNode<E>) localRoot).sizeOfChildren() - 1));
         }
-        return findLeafForHelper(value, ((InternalNode<E>) localRoot).getChild(((InternalNode<E>) localRoot).sizeOfChildren() - 1));
+        return null; //tree was empty so no leaf exists
     }
 
     /**
