@@ -12,5 +12,5 @@ To run:
   s 'number' //searches for a key prints 'number' FOUND if the key exists in the tree  
    // 'number' NOT FOUND if the key doesn't exist in the tree  
 2. Run the main method and specify the input and output files  
-3. Enjoy your output file!  
+<b>3. Enjoy your output file!  </b>
 
