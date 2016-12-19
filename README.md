@@ -1,6 +1,7 @@
 </h1>Class project for Database Management Systems (CS455)</h1>
 <div>The project is a B+ Tree that supports insertion, searching, and 
 level order printing.</div>
+<div>
 <ol>
   <li>Structure an input file like "input.txt"</li>
   	<ul>
@@ -11,3 +12,4 @@ level order printing.</div>
   <li>Run the main method and specify the input and output files</li>
   <li>Enjoy your output file!</li>
 </ol>
+</div>
