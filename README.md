@@ -1,6 +1,6 @@
 </h1>Class project for Database Management Systems (CS455)</h1>
-The project is a B+ Tree that supports insertion, searching, and 
-level order printing.
+<div>The project is a B+ Tree that supports insertion, searching, and 
+level order printing.</div>
 <ol>
   <li>Structure an input file like "input.txt"</li>
   	<ul>
